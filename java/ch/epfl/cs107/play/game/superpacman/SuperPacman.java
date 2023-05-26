@@ -124,10 +124,11 @@ public class SuperPacman extends RPG{
 	public boolean begin (Window window, FileSystem fileSystem) {
 		if (super.begin( window , fileSystem )) {
 			createAreas();
-			Area area = setCurrentArea("superpacman/Level3", true);
-			player = new SuperPacmanPlayer(area, Orientation.DOWN, SPAWN_POSITION[4]);
+			// TODO change current area, spawn position and player.start depending on which level to start at
+			Area area = setCurrentArea("superpacman/GameLaunch", true);
+			player = new SuperPacmanPlayer(area, Orientation.DOWN, SPAWN_POSITION[0]);
 			initPlayer(player);
-			player.start = true; //uncomment this line if not beginning the game in GameLaunch
+			//player.start = true; //uncomment this line if not beginning the game in GameLaunch
 			return true;
 		}
 		return false;

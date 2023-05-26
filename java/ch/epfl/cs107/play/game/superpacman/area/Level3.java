@@ -82,8 +82,9 @@ public class Level3 extends SuperPacmanArea {
 
 		super.update(deltaTime);
 		
-		gates[16].open();
-		gates[18].open();
+		//TODO uncomment to free passage to finish level without having to play through it entirely
+		//gates[16].open();
+		//gates[18].open();
 			
 		if (HiddenRoomAttempts>=2) {
 			leaveAreaCells(hiddenDoor, hiddenDoor.getCurrentCells());
