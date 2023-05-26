@@ -1,0 +1,82 @@
+
+
+------------------------❆ PERSONNAL ADDITIONS ❆------------------------
+
+	THIRD LEVEL :	Additionnal level following the same structure as the first two, its behaviour map was drawn by us.
+			This level was added in the structure the same way as Level0, Level1 & Level2.
+	
+
+	FINAL LEVEL :	This level is found in the code as BossRoom. The structure of this level is almost the same as the others, albeit smaller.
+			The bahviour map was also drawn beforehand.
+
+	TEXT AREAS :	Those are new kinds of "levels". They differ a lot from the others for the following reasons:
+			- They all have almost the same behaviour map: a 2x1 square of empty cells, on which the player, all its status (score and hp) are not shown.
+			- The player_spawn_position is always at the position (0,0).
+			- The player cannot be moved by the person who plays it. Instead, depending on a certain keyboard entry, the player will automatically be moved to the cell (1,0).
+			- When this happens, the player is moved to the next area (there is a door on the cell (1,0)).
+			- The aim of such areas is for them to display a text (most often containing questions or riddles). The person playing inputs an answer which exits the player.
+			- Depending on the entry, different consequences can happen when the player moves back to the "gaming" areas.
+			 
+
+	GUI STATUSES : 	The player has its own status, that draws different graphics in the gaming window depending on the player's variables.
+			Most text areas are also assigned a GUI status : it contains all the graphical information of the assigned area (TextGraphics).
+			Text areas and GUI statuses are not explicitly assigned to each other. The link is made in the class SuperPacmanPlayer, where the corresponding status is drawn depending on the player's location.
+
+	RIDDLE KEYS :	New sub-class of Key. It features additionnal variables and methods related to text areas.
+			This type of key is only collected if what the text area considers as the right entry is input.
+			In the creation of a level containing riddle keys, a door is placed on the same cell as the riddle key, leading to the corresponding text area.
+			When the player re-spawns in the level, he is displaced next to the key, to avoid being inifinitely looped through the door at the same position.
+			When the person playing input the right answer, the door is deactivated.
+
+	HEARTS :	New sub-class of collectables. It gives the player an additionnal hp.
+
+	WEAPONS : 	New sub-class of collectables. It shows a chest on the Level where it is registered. When opened, it gives the player a certain weapon, depending on its constructor.
+
+	WALLS : 	Added INVISIBLE_WALL and STONE_WALL. Those act like normal walls but have different sprites to accomodate the background.
+
+	FINAL BOSS :	New sub-class of Pinky. It appears on the final level and, in terms of deplacement, acts like a Pinky.
+			This boss is given a set number of HP, that decrement when it interacts with the player (if the player is invincible).
+			The number of lost HP depends on the player's weapon.
+			When the boss' HP reaches 0 (or lower), the game ends.
+
+	GAMEPLAY :	The general gameplay was improved by adding some features :
+			- The game can end. It happens either when the player defeats the boss, reaches 0 HP or less or 0 score points or less.
+			- When the game ends, the window doesn't close. The person playing has the possibility to start again from the beginning.
+			- When a game ends, the player's score is stored in a variable in SuperPacman. It will also update if the most recent score is higher than the previous highest score.
+			- The game has a launching page (text area) displaying the highest score (as long as the "gaming" window isn't closed) and gameplay instructions.
+			- The game can be paused. When the SPACE bar is released, it becomes impossible to move the player. Ghosts movements, animations and eventual timers are stopped.
+			- When a player enters a text area, the level it comes from is paused.
+
+	DOGGO :		A new AreaEntity defining new sprites that can be displayed. Instances of this class can be found in HiddenRoom. They're here to decorate and give you your daily dose of serotonin ;)
+
+
+------------------------❆ CLASSES AND INTERFACES ARCHITECTURE ❆------------------------
+
+	MAIN CLASSES :	SuperPacman and SuperPacmanPlayer. They are the two classes where most links between other classes are made.
+			SuperPacmanPlayer decides mainly the movements of the player, the drawing of all different statuses, depending on the player's state, location and interactions with the other Actors.
+			Ghosts only have passive interactions and Collectables (coins, cherries, hearts...) only define the methods that SuperPacmanPlayer calls when interacting with them.
+			SuperPacman manages all the created areas and actions that have an effect on a whole area (scaring all the ghosts, ending the game, pausing the game, etc...).
+
+	AREA MANAGING : The super-class is SuperPacmanArea. It associates areas with behaviour maps.
+			Since it has access to SuperPacmanBehavior, and therefore all actors automatically created through the behaviour map, it contains all methods acting on all actors of an area, that are then called by SuperPacman.
+			SuperPacmanBehavior manages the registeration of all actors, based on the behavior maps.
+			For some of our own personal actor additions, we have created new colours that SuperPacmanBehavior can recognize, using the binary representation of the ARGB of said colours.
+	
+	AREAS :		The levels extend directly SuperPacmanArea.
+			TextAreas is an abstract class extending SuperPacmanArea. It defines the methods and variables similar to all other text areas (e.g. spawn position).
+
+	GHOSTS : 	The super-class Ghost defines the basic comportement of ghosts and the interactions with other Interactors.
+			Blinky, being a very simple ghost, directly extends Ghost.
+			IntelligentGhost is an abstract class extending Ghost, defining how Pinky and Inky will get their next orientation.
+			Boss extends Pinky, as it has the same behavior.
+
+	COLLECTABLES :	Most of all the other interactors are collectables, under the super-class SuperPacmanCollectables, re-defining collect().
+			RiddleKey extends Key, for it has the same implementation of Logic.
+			Bonus and Hearts are under AnimatedCollectables (extending SuperPacmanCollectables) to make it simpler to handle their animation (updating and pausing the animation).
+
+	GATE :		This class defines the gates by noteably giving them a Logic signal. The signal's logic is usually managed by the areas, where all keys and gates are registered, since they're not managed by SuperPacmanBehavior.
+			Depending on the signal's state, the areas call open(), defined in Gate.
+			It allows the gate to disappear so that the player can pass on the space it occupied. The gate's position is also here removed, as long as the gate exists, from the AreaGraph that the IntelligentGhosts use to find their route.		
+
+	
+	
